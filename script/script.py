@@ -10,11 +10,6 @@ from datetime import datetime
 
 spark = (SparkSession.builder
     .appName("Postgres data loading")
-                        # .config('jars', f'{os.getcwd()}/include/driver/PostgreSQL-42.6.0.jar')
-                        # .config('executor.extraClassPath', f'{os.getcwd()}/include/driver/PostgreSQL-42.6.0.jar')
-                        # .config('executor.extraLibrary', f'{os.getcwd()}/include/driver/PostgreSQL-42.6.0.jar')
-                        # .config('driver.extraClassPath', f'{os.getcwd()}/include/driver/PostgreSQL-42.6.0.jar')
-                        .appName("Postgres data loading")
     .getOrCreate())
 
 
@@ -24,24 +19,13 @@ database = "ensurwave"
 username = "postgres"
 password = "postgres"
 url = f"jdbc:postgresql://{host}:{port}/{database}"
-
-print(f'''
-
-ROMILDO
-{os.getcwd()}
-{os.listdir(os.getcwd())}
-{host}
-{port}
-{database}
-{username}
-{password}
-{url}
-
-
-''')
+properties = {
+    "user": username,
+    "password": password
+}
 
 # # Create a PySpark dataframe
-employees_raw = spark.read.option('inferSchema',True).option('multiline','true').json('/home/astro/pyspark/data/20230331_employees_details.json	')
+employees_raw = spark.read.option('inferSchema',True).option('multiline','true').json('script/data/new/20230331_employees_details.json')
 
 # employees_raw.show(truncate=False)
 # employees_raw.printSchema()
@@ -62,7 +46,6 @@ for i in array_types:
 salary = second_change.select(col('id').alias('id_emp'),'currency','type','value').groupBy('id_emp','currency').pivot('type').sum('value').drop('value','type').dropDuplicates()
 
 last_change = second_change.alias('emp').join(salary.alias('sal'), on=col('emp.id')==col('sal.id_emp'), how='inner').drop('id_emp','currency','type','value').dropDuplicates()
-
 last_change.show()
 
 # Escreva os dados de volta no PostgreSQL
@@ -72,12 +55,13 @@ last_change.show()
     .write
     .format('jdbc')
     .option('url', url)
-    .option('dbtable', 'ludmila_teste')
+    .option('dbtable', 'ludmila')
     .option('user', username)
-    .option('password', password).mode('append')
+    .option('password', password)
+    .mode('append')
     .option('driver', 'org.postgresql.Driver')
     .save())
 
-# .mode('overwrite')
+    # .mode('overwrite')
 # Pare a sessão Spark
 spark.stop()

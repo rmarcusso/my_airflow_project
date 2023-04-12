@@ -1,4 +1,2 @@
 default-jdk
 default-jre
-wget
-scala

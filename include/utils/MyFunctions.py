@@ -3,50 +3,30 @@ from pyspark.sql.functions import *
 
 # My Imports
 import os
+import shutil
+from datetime import datetime
 
 # PySpark Imports
 from pyspark.sql import SparkSession
 
 class MyFunctions(object):
 
-    def __init__(self, location):
+    def __init__(self):
+        self.spark = SparkSession.builder.config('spark.jars', 'include/utils/driver/PostgreSQL-42.6.0.jar').appName("MyProject").getOrCreate()
 
-        self.location = location
-
-        if self.location == 'dockerfile':
-            self.config = {'jars':'/home/astro/pyspark/jars/postgresql-42.6.0.jar',
-                        'extraClassPath': '/home/astro/pyspark/jars/postgresql-42.6.0.jar',
-                        'extraLibrary': '/home/astro/pyspark/jars/postgresql-42.6.0.jar',
-                        'extraClassPath': '/home/astro/pyspark/jars/postgresql-42.6.0.jar'
-                        }
-        elif self.location == 'airflow':
-            self.config = {'jars':f'include/driver/postgresql-42.6.0.jar',
-                        'extraClassPath': f'include/driver/postgresql-42.6.0.jar',
-                        'extraLibrary': f'include/driver/postgresql-42.6.0.jar',
-                        'extraClassPath': f'include/driver/postgresql-42.6.0.jar'
-                        }
-        elif self.location == 'together':
-            self.config = {'jars': 'postgresql-42.6.0.jar',
-                        'extraClassPath': 'postgresql-42.6.0.jar',
-                        'extraLibrary': 'postgresql-42.6.0.jar',
-                        'extraClassPath': 'postgresql-42.6.0.jar'
-                        }        
-        
-        self.spark = (SparkSession.builder
-                        .appName("Postgres data loading")
-                        .config('jars', self.config['jars'])
-                        .config('executor.extraClassPath', self.config['extraClassPath'])
-                        .config('executor.extraLibrary', self.config['extraLibrary'])
-                        .config('driver.extraClassPath', self.config['extraClassPath'])
-                        .appName("Postgres data loading")
-                        .getOrCreate())
+        self.host = "localhost"
+        self.port = "5432"
+        self.database = "ensurwave"
+        self.username = "postgres"
+        self.password = "postgres"
+        self.url = f"jdbc:postgresql://{self.host}:{self.port}/{self.database}"
 
     def getting_json_files(self, ti):
         list_files = [x for x in os.listdir(
             f'include/data/new/') if 'employees_details.json' in x]
 
         for file in list_files:
-            file = f'{os.getcwd()}/include/data/new/{file}'
+            file = f'include/data/new/{file}'
             break
 
         ti.xcom_push(key='json_file_to_process', value=file)
@@ -60,53 +40,16 @@ class MyFunctions(object):
         # Mounting the dataframe to save the history of schemas used.
         data = [{'schema':schema_raw_data, 'version': 1}]
         current_schema = self.spark.createDataFrame(data)
-
-        host = "localhost"
-        port = "5432"
-        database = "ensurwave"
-        username = "postgres"
-        password = "postgres"
-        url = f"jdbc:postgresql://{host}:{port}/{database}"
-
-        print(f'''
-        PATH:
-        {os.getcwd()}
-        ''')
-        
-        print(f'''
-        CONFIG:
-
-        {self.config['jars']}
-        {self.config['extraClassPath']}
-        {self.config['extraLibrary']}
-        {self.config['extraClassPath']}
-        ''')
-        
-        print(f'''
-        RAIZ:
-        {os.listdir(os.getcwd())}
-        ''')
-        
-        print(f'''
-        INCLUDE:
-        {os.listdir(f'{os.getcwd()}/pyspark/')}
-        ''')
-        
-        print(f'''
-        DRIVER:
-        {os.listdir(f'{os.getcwd()}/pyspark/driver/')}
-        ''')
-        
         current_schema.show()
 
         (current_schema
             .write
             .format('jdbc')
-            .option('url', url)
+            .option('url', self.url)
             .mode('overwrite')
-            .option('dbtable', 'schema_history')
-            .option('user', username)
-            .option('password', password)
+            .option('dbtable', 'schema_version')
+            .option('user', self.username)
+            .option('password', self.password)
             .option('driver', 'org.postgresql.Driver')
             .save())
 
@@ -180,25 +123,21 @@ class MyFunctions(object):
         username = "postgres"
         password = "postgres"
         url = f"jdbc:postgresql://{host}:{port}/{database}"
-        properties = {
-            "user": username,
-            "password": password
-        }
 
         # This part of code works out of the Airflow environment
-        # (last_change
-        #     .write
-        #     .format('jdbc')
-        #     .option('url', url)
-        #     .mode('overwrite')
-        #     .option('dbtable', 'ludmila4')
-        #     .option('user', username)
-        #     .option('password', password)
-        #     .option('driver', 'org.postgresql.Driver')
-        #     .save())
+        (last_change
+            .write
+            .format('jdbc')
+            .option('url', self.url)
+            .mode('overwrite')
+            .option('dbtable', 'employee')
+            .option('user', self.username)
+            .option('password', self.password)
+            .option('driver', 'org.postgresql.Driver')
+            .save())
 
 
     
     def move_to_processed(self, ti):
         file = ti.xcom_pull(key='json_file_to_process', task_ids=['GettingJsonFileToProcess'])[0]
-        os.rename(file, file.replace('new', 'processed')) # include/data/new/20230331_employees_details.json
+        os.rename(file, file.replace('new', 'processed'))

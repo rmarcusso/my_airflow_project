@@ -1,3 +1,23 @@
+My comments...
+========
+
+My name is Romildo and it was a pleasure to receive this opportunity. Thank you very much.
+
+I tried to bring a pipeline using Airflow and PySpark with Postgres as the database.
+
+However, the main problem I faced was connecting to the database through Airflow on my local machine. I was able to persist it on my local machine, but I couldn't think of anything that had the same function as the Airflow Sensor.
+
+Below is my thought process:
+
+<img src="images/dag_hr_department.png" width="1000px">
+
+1. WaitingForJsonFile: A sensor responsible for monitoring if the folder has received a new file;
+2. GettingJsonFileToProcess: Controls capturing a single file for processing and continues the pipeline. If more than one file is loaded, this point ensures that only one file moves forward;
+3. GettingSchemaVersion: Would retrieve the schema version from the database and compares it with the schema version of the incoming file. If the schema versions are different, it would update the schema history table in Postgres and proceed with the processing of the file. If the schema versions are the same, it would be skipped the processing step and moved the file to the processed folder.
+4. ProcessingFile: ProcessingFile: Processes the file to persist it in Postgres;
+5. MoveFileToProcessedFolder: After processing, the processed file is moved from /include/data/new to /include/data/processed."
+
+
 Overview
 ========
 
@@ -44,3 +64,5 @@ Contact
 =======
 
 The Astronomer CLI is maintained with love by the Astronomer team. To report a bug or suggest a change, reach out to our support team: https://support.astronomer.io/
+
+---
