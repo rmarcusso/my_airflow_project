@@ -14,7 +14,7 @@ spark = (SparkSession.builder
 
 
 host = "localhost"
-port = "5432"
+port = "5433"
 database = "ensurwave"
 username = "postgres"
 password = "postgres"

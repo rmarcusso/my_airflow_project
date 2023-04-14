@@ -7,6 +7,7 @@ from airflow import DAG
 
 # Operators
 from airflow.operators.python import PythonOperator
+from airflow.operators.dummy import DummyOperator
 
 # Sensor
 from airflow.sensors.filesystem import FileSensor
@@ -16,11 +17,9 @@ from datetime import datetime, timedelta
 
 # My Utils
 mf = MyFunctions()
-
 # Dag Development
 default_args = {'owner': 'Romildo Marcusso',
                 'retry': 5, 'retry_dealy': timedelta(minutes=5)}
-
 
 with DAG(
     dag_id='treatment_hr_department',
@@ -51,14 +50,14 @@ with DAG(
         python_callable=mf.getting_schema_version
     )
 
-    processing_file = PythonOperator(
-        task_id='ProcessingFile',
-        python_callable=mf.create_parquet_file
-    )
+    # processing_file = PythonOperator(
+    #     task_id='ProcessingFile',
+    #     python_callable=mf.create_parquet_file
+    # )
 
-    move_file = PythonOperator(
-        task_id='MoveFileToProcessedFolder',
-        python_callable=mf.move_to_processed
-    )
+    # move_file = PythonOperator(
+    #     task_id='MoveFileToProcessedFolder',
+    #     python_callable=mf.move_to_processed
+    # )
 
-    file_sensor >> getting_json_file_to_process >> getting_schema_version >> processing_file >> move_file
+    file_sensor >> getting_json_file_to_process >> getting_schema_version # >> processing_file >> move_file

@@ -16,15 +16,6 @@ airflow:
       conn_port: 
       conn_extra:
         path: include/data/new
-    - conn_id: conn_postgres
-      conn_type: postgres
-      conn_host: localhost
-      conn_schema: my_project
-      conn_login: postgres
-      conn_password: postgres
-      conn_port: 5432
-      conn_extra:
-        path: 
   pools:
     - pool_name:
       pool_slot:
