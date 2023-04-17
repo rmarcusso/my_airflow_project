@@ -1,0 +1,107 @@
+[
+    {
+        "id": "abc4567xyz",
+        "name": "John Doe",
+        "attributes": {
+            "position": "Senior Developer",
+            "joinedOn": "2023-04-01T08:30:00.000Z",
+            "satisfactionScore": 8.9
+        },
+        "salaryValues": [
+            {
+                "type": "Base",
+                "currency": "USD",
+                "value": 85000
+            },
+            {
+                "type": "Bonus",
+                "currency": "USD",
+                "value": 7000
+            },
+            {
+                "type": "Benefits",
+                "currency": "USD",
+                "value": 1500
+            }
+        ],
+        "isDeleted": false,
+        "address": {
+            "street": "123 Main St",
+            "city": "Anytown",
+            "state": "CA",
+            "zip": "12345"
+        },
+        "phone": "+1-555-555-1234",
+        "email": "johndoe@example.com"
+    },
+    {
+        "id": "pqr7890mno",
+        "name": "Alice Jones",
+        "attributes": {
+            "position": "Marketing Manager",
+            "joinedOn": "2022-08-15T09:00:00.000Z",
+            "satisfactionScore": 9.5
+        },
+        "salaryValues": [
+            {
+                "type": "Base",
+                "currency": "USD",
+                "value": 100000
+            },
+            {
+                "type": "Bonus",
+                "currency": "USD",
+                "value": 10000
+            },
+            {
+                "type": "Benefits",
+                "currency": "USD",
+                "value": 2000
+            }
+        ],
+        "isDeleted": false,
+        "address": {
+            "street": "456 High St",
+            "city": "Smallville",
+            "state": "NY",
+            "zip": "54321"
+        },
+        "phone": "+1-555-555-5678",
+        "email": "alicejones@example.com"
+    },
+    {
+        "id": "xyz1234abc",
+        "name": "David Lee",
+        "attributes": {
+            "position": "Sales Executive",
+            "joinedOn": "2022-11-15T13:45:00.000Z",
+            "satisfactionScore": 9.1
+        },
+        "salaryValues": [
+            {
+                "type": "Base",
+                "currency": "USD",
+                "value": 90000
+            },
+            {
+                "type": "Bonus",
+                "currency": "USD",
+                "value": 8000
+            },
+            {
+                "type": "Benefits",
+                "currency": "USD",
+                "value": 1500
+            }
+        ],
+        "isDeleted": false,
+        "address": {
+            "street": "789 Elm St",
+            "city": "Metro City",
+            "state": "IL",
+            "zip": "67890"
+        },
+        "phone": "+1-555-555-9012",
+        "email": "davidlee@example.com"
+    }
+]

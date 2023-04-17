@@ -6,7 +6,6 @@
         "joinedOn": "2023-02-15T15:09:57.655Z",
         "satisfactionScoe": 10.5
     },
-    
     "salaryValues": [
         {
             "type": "Base",
@@ -17,6 +16,11 @@
             "type": "Bonus",
             "currency": "USD",
             "value": 5000
+        },
+        {
+            "type": "Benefits",
+            "currency": "USD",
+            "value": 1000
         }
     ],
     "isDeleted": false

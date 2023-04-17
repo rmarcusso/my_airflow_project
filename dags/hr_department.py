@@ -24,9 +24,9 @@ default_args = {'owner': 'Romildo Marcusso',
 with DAG(
     dag_id='treatment_hr_department',
     description='The treatment of employee data to the HR department.',
-    start_date=datetime(2023, 1, 19),
-    # schedule_interval=timedelta(seconds=10),
-    schedule_interval='@once',
+    start_date=datetime(2023, 4, 17),
+    schedule_interval=timedelta(seconds=10),
+    # schedule_interval='@once',
     max_active_runs=1,
     tags=['Challenge Insurwave'],
     catchup=False,
@@ -50,14 +50,14 @@ with DAG(
         python_callable=mf.getting_schema_version
     )
 
-    # processing_file = PythonOperator(
-    #     task_id='ProcessingFile',
-    #     python_callable=mf.create_parquet_file
-    # )
+    processing_file = PythonOperator(
+        task_id='ProcessingFile',
+        python_callable=mf.persist_data
+    )
 
-    # move_file = PythonOperator(
-    #     task_id='MoveFileToProcessedFolder',
-    #     python_callable=mf.move_to_processed
-    # )
+    move_file = PythonOperator(
+        task_id='MoveFileToProcessedFolder',
+        python_callable=mf.move_to_processed
+    )
 
-    file_sensor >> getting_json_file_to_process >> getting_schema_version # >> processing_file >> move_file
+    file_sensor >> getting_json_file_to_process >> getting_schema_version >> processing_file >> move_file
