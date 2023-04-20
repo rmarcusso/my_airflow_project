@@ -21,5 +21,17 @@ airflow:
       pool_slot:
       pool_description:
   variables:
-    - variable_name:
-      variable_value:
+    - variable_name: bot_token
+      variable_value: "6122560109:AAFDO_JcwcnmcBpBGqdgwIuj_66cazomTTU"
+    - variable_name: chat_id_secret
+      variable_value: "1156659572"
+    - variable_name: host
+      variable_value: postgres
+    - variable_name: port
+      variable_value: 5432
+    - variable_name: database
+      variable_value: ensurwave
+    - variable_name: username_secret
+      variable_value: postgres
+    - variable_name: password_secret
+      variable_value: postgres

@@ -1,4 +1,4 @@
-# Import Pyself. Resources
+# Import PySpark self Resources
 from pyspark.sql.functions import *
 
 # My Imports
@@ -7,6 +7,10 @@ import shutil
 from datetime import datetime
 import hashlib
 import pandas as pd
+import requests
+
+# Airflow Imports
+from airflow.models import Variable
 
 # PySpark Imports
 from pyspark.sql import SparkSession
@@ -19,20 +23,65 @@ class MyFunctions(object):
                       .config('spark.driver.extraClassPath', 'include/driver/postgresql-42.6.0.jar')
                       .appName("MyProject").getOrCreate())
 
-        self.host = "postgres"
-        self.port = "5432"
-        self.database = "ensurwave"
-        self.username = "postgres"
-        self.password = "postgres"
+        self.host = Variable.get('host')
+        self.port = Variable.get('port')
+        self.database = Variable.get('database')
+        self.username = Variable.get('username_secret')
+        self.password = Variable.get('password_secret')
+
         self.url = f"jdbc:postgresql://{self.host}:{self.port}/{self.database}"
-    
 
     def rmtree_spark_directory(self):
         try:
             shutil.rmtree(f'{os.getcwd()}/spark-warehouse')
         except:
             print(f"'{os.getcwd()}/spark-warehouse' doesn\'t exists.")
-    
+
+    def send_message_telegram(self, ti, status=None, message=None, **context):
+        file = ti.xcom_pull(key='json_file_to_process', task_ids=['GettingJsonFileToProcess'])[0]
+        fileName = file.split('/')[-1]
+
+        telegram_token = Variable.get('bot_token')
+        telegram_chat_id = Variable.get('chat_id_secret')
+
+        url = f'https://api.telegram.org/bot{telegram_token}/sendMessage'
+
+        # format string for the timestamp
+        format_str = '%Y-%m-%dT%H:%M:%S.%f%z'
+
+        # convert the string timestamp to a datetime object
+        datetime_obj = datetime.strptime(context['ts'], format_str)
+
+        # new value with new format
+        new_ts = datetime_obj.strftime("%m-%d-%Y %H:%M:%S")
+
+        # getting the dag name in context
+        dag_components = context['task_instance_key_str'].split('__')
+        dag_name = dag_components[0]
+        
+        if not status:
+            to_send_message = f'''
+    # Dag name: {dag_name} processing at {new_ts}
+
+    STATUS: Fail
+
+    MESSAGE:
+    {message}
+    Filename: {fileName}
+    '''
+        else:
+            to_send_message = f'''
+    # Dag name: {dag_name} processing at {new_ts}
+
+    STATUS: Success
+
+    MESSAGE: {message}
+    '''
+        
+        data = {'chat_id': telegram_chat_id, 'text': to_send_message}
+
+        requests.post(url, data=data)
+
 
     def is_exist_table(self, table):
         # Evaluating inf the table exists
@@ -43,10 +92,12 @@ class MyFunctions(object):
                 .option('password', self.password)
                 .option('driver', 'org.postgresql.Driver').load().filter(f'table_name == "{table}"').count())
         return is_exist_table
-
-
+    
 
     def getting_json_files(self, ti):
+
+        self.rmtree_spark_directory()
+        
         list_files = [x for x in os.listdir(
             f'include/data/new/') if 'employees_details.json' in x]
 
@@ -208,7 +259,6 @@ class MyFunctions(object):
 
             persist_data.write.mode('overwrite').saveAsTable('tmp_employees')
             tb_persist_data = self.spark.table('tmp_employees')
-
 
             (tb_persist_data
                 .write
