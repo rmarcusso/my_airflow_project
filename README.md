@@ -1,14 +1,97 @@
-My comments...
+# MY AIRFLOW PROJECT
 ========
 
-Hello guys, for this project run with the monitoring you need to create a bot talking with [@BotFather](https://t.me/BotFather)
+Hello guys, for this project run with the monitoring you need to create a bot and get your ID with the steps below. talking with [@BotFather](https://t.me/BotFather) or through QR Code below.
 
-1. WaitingForJsonFile: A sensor responsible for monitoring if the folder has received a new file;
-2. GettingJsonFileToProcess: Controls capturing a single file for processing and continues the pipeline. If more than one file is loaded, this point ensures that only one file moves forward;
-3. GettingSchemaVersion: Would retrieve the schema version from the database and compares it with the schema version of the incoming file. If the schema versions are different, it would update the schema history table in Postgres and proceed with the processing of the file. If the schema versions are the same, it would be skipped the processing step and moved the file to the processed folder.
-4. ProcessingFile: ProcessingFile: Processes the file to persist it in Postgres;
-5. MoveFileToProcessedFolder: After processing, the processed file is moved from /include/data/new to /include/data/processed."
+Follow this steps to create your bot correctly;
 
+<table>
+  <tr>
+    <td><img src="assets/images/t_me-BotFather.jpeg" width="300px"/></td>
+    <td>
+      <ol>
+        <li>Send the message: <i>/newbot</i>
+        <li>Choose the bot's name.</li>
+        <li>Choose the bot's user. You need to create a unique name with "bot" in the end. Eg: "JohnBot" or "john_bot".</li>
+        <li>Save the token.</li>
+        </ol>
+    </td>
+  </tr>
+  <tr>
+    <td><img src="assets/images/t_me-UserInfoBot.jpeg" width="300px"/></td>
+    <td>
+      <ol>
+        <li>Send any message to receive your infos.</li>
+        <li>Take the <i>Id</i></li>
+        </ol>
+    </td>
+  </tr>
+</table>
+
+After you have the requirements above, let me explain for what they are used for.
+
+The ___token___ is used for identify what bot will get the message.
+
+The ___id___ is used for kwow who will get the message.
+
+With the token and the id in hands, go to the `airflow_settings.yaml` and replace _Your bot token_ and _Your chat id_
+
+In this simple tutorial, I had shown how to send the message for ourselves.
+
+To test the bot you can use Python code below:
+
+``` Python
+
+import requests
+
+token = 'your token'
+chat_id = 'your chat id'
+
+url = f'https://api.telegram.org/bot{token}/sendMessage'
+
+message = 'Hello world!'
+
+data = {'chat_id': chat_id, 'text': message}
+
+requests.post(url, data=data)
+```
+---
+# Videos
+
+Here we can see the notifications working in case of failure and success.
+
+<table>
+  <tr>
+    <th>Success</th>
+    <th>Fail</th>
+  </tr>
+  <tr>
+    <td>
+      <img src="assets/video/Success.gif" width="800px"/>
+    </td>
+    <td>
+      <img src="assets/video/Fail.gif" width="800px"/>
+    </td>
+  </tr>
+</table>
+---
+
+# The Pipeline
+
+
+1. <span style="color:green">The main flow at the pipeline;</span>
+2. <span style="color:red">Each red task will send a message with failure;</span>
+3. <span style="color:DodgerBlue">The blue send a success message;</span>
+
+<img src="assets/images/pipelineFlow.png"/>
+
+The main flow is compound for:
+
+1. __WaitingForJsonFile__: This is a _Sensor Operator_ responsible for monitoring if the folder has received a new file with the pattern *_employees_details.json;
+2. __GettingJsonFileToProcess__: Python Operator in order to capture a single file for processing and continues the pipeline. If more than one file is loaded, this point ensures that only one file moves forward;
+3. __GettingSchemaVersion__: A Python Operator retrieves last the schema version from the database and compares it with the schema version of the incoming file. If the schema versions are different, the schema file will be stored in Postgres and proceed with the processing of the file. If the schema versions are the same, the recording history is skipped and the file will be processed normally.
+4. __ProcessingFile__: Processes the file to persist it in Postgres. If there is some difference between schemas, the adjustment will be made;
+5. __MoveFileToProcessedFolder__: After processing, the file is moved from _include/data/new_ to _include/data/processed_ to keep the file history.
 
 Overview
 ========
