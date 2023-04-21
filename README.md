@@ -11,8 +11,8 @@ Follow this steps to create your bot correctly;
     <td>
       <ol>
         <li>Send the message: <i>/newbot</i>
-        <li>Choose the bot's name.</li>
-        <li>Choose the bot's user. You need to create a unique name with "bot" in the end. Eg: "JohnBot" or "john_bot".</li>
+        <li>Choose the bot's name. You need to create a unique name with "bot" in the end. Eg: "JohnBot" or "john_bot".</li>
+        <li>Choose the bot's user.</li>
         <li>Save the token.</li>
         </ol>
     </td>
@@ -22,7 +22,7 @@ Follow this steps to create your bot correctly;
     <td>
       <ol>
         <li>Send any message to receive your infos.</li>
-        <li>Take the <i>Id</i></li>
+        <li>Take the <i>Id</i></li>. This ID is the person who will reseave the message.
         </ol>
     </td>
   </tr>
@@ -60,20 +60,11 @@ requests.post(url, data=data)
 
 Here we can see the notifications working in case of failure and success.
 
-<table>
-  <tr>
-    <th>Success</th>
-    <th>Fail</th>
-  </tr>
-  <tr>
-    <td>
-      <img src="assets/video/Success.gif" width="800px"/>
-    </td>
-    <td>
-      <img src="assets/video/Fail.gif" width="800px"/>
-    </td>
-  </tr>
-</table>
+## Success
+<img src="assets/video/Success.gif" width="800px"/>
+
+## Fail
+<img src="assets/video/Fail.gif" width="800px"/>
 ---
 
 # The Pipeline
