@@ -1,15 +1,7 @@
 My comments...
 ========
 
-My name is Romildo and it was a pleasure to receive this opportunity. Thank you very much.
-
-I tried to bring a pipeline using Airflow and PySpark with Postgres as the database.
-
-However, the main problem I faced was connecting to the database through Airflow on my local machine. I was able to persist it on my local machine, but I couldn't think of anything that had the same function as the Airflow Sensor.
-
-Below is my thought process:
-
-<img src="images/dag_hr_department.png" width="1000px">
+Hello guys, for this project run with the monitoring you need to create a bot talking with [@BotFather](https://t.me/BotFather)
 
 1. WaitingForJsonFile: A sensor responsible for monitoring if the folder has received a new file;
 2. GettingJsonFileToProcess: Controls capturing a single file for processing and continues the pipeline. If more than one file is loaded, this point ensures that only one file moves forward;

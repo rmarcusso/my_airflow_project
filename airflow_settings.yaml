@@ -22,9 +22,9 @@ airflow:
       pool_description:
   variables:
     - variable_name: bot_token
-      variable_value: "6122560109:AAFDO_JcwcnmcBpBGqdgwIuj_66cazomTTU"
+      variable_value: "Your bot token"
     - variable_name: chat_id_secret
-      variable_value: "1156659572"
+      variable_value: "Your chat id"
     - variable_name: host
       variable_value: postgres
     - variable_name: port
