@@ -30,7 +30,7 @@ airflow:
     - variable_name: port
       variable_value: 5432
     - variable_name: database
-      variable_value: ensurwave
+      variable_value: my_project
     - variable_name: username_secret
       variable_value: postgres
     - variable_name: password_secret
